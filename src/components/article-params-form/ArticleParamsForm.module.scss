@@ -23,6 +23,13 @@
 	padding: 50px 31px;
 	background-color: #ffffff;
 	border-right: 1px solid #000000;
+	gap: 50px;
+}
+
+.formTitle {
+	font-weight: 800;
+	font-size: 31px;
+	text-transform: uppercase;
 }
 
 .bottomContainer {
@@ -30,3 +37,5 @@
 	justify-content: space-between;
 	margin-top: auto;
 }
+
+
