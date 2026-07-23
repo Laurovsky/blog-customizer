@@ -2,9 +2,10 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Select } from 'src/ui/select';
 import {
+	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
 	defaultArticleState,
@@ -15,9 +16,28 @@ import {
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 
-export const ArticleParamsForm = () => {
+type ArticleParamsFormProps = {
+	articleState: ArticleStateType;
+	setArticleState: (state: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({
+	articleState,
+	setArticleState,
+}: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [formState, setFormState] = useState(defaultArticleState);
+	const [formState, setFormState] = useState<ArticleStateType>(articleState);
+	const sidebarRef = useRef<HTMLElement>(null);
+	useEffect(() => {
+		const handleClick = () => {
+			setIsOpen(false);
+		};
+		document.addEventListener('mousedown', handleClick);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClick);
+		};
+	}, []);
 
 	return (
 		<>
@@ -28,10 +48,16 @@ export const ArticleParamsForm = () => {
 				}}
 			/>
 			<aside
-				className={`${styles.container} ${
-					isOpen ? styles.container_open : ''
-				}`}>
-				<form className={styles.form}>
+				className={`
+					${styles.container}
+					${isOpen ? styles.container_open : ''}`}
+				ref={sidebarRef}>
+				<form
+					className={styles.form}
+					onSubmit={(e) => {
+						e.preventDefault();
+						setArticleState(formState);
+					}}>
 					<h1 className={styles.formTitle}>ЗАДАЙТЕ ПАРАМЕТРЫ</h1>
 					<Select
 						selected={formState.fontFamilyOption}
@@ -39,7 +65,7 @@ export const ArticleParamsForm = () => {
 						onChange={(option) => {
 							setFormState((prev) => ({
 								...prev,
-								fontFamilyOptions: option,
+								fontFamilyOption: option,
 							}));
 						}}
 						title='шрифт'></Select>
@@ -86,7 +112,15 @@ export const ArticleParamsForm = () => {
 						}}
 						title='ширина контента'></Select>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' htmlType='reset' type='clear' />
+						<Button
+							title='Сбросить'
+							htmlType='reset'
+							type='clear'
+							onClick={() => {
+								setArticleState(defaultArticleState);
+								setFormState(defaultArticleState);
+							}}
+						/>
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
