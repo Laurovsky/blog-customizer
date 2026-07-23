@@ -29,8 +29,10 @@ export const ArticleParamsForm = ({
 	const [formState, setFormState] = useState<ArticleStateType>(articleState);
 	const sidebarRef = useRef<HTMLElement>(null);
 	useEffect(() => {
-		const handleClick = () => {
-			setIsOpen(false);
+		const handleClick = (event: MouseEvent) => {
+			if (!sidebarRef.current?.contains(event.target as Node)) {
+				setIsOpen(false);
+			}
 		};
 		document.addEventListener('mousedown', handleClick);
 
