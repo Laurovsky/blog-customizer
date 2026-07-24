@@ -2,7 +2,7 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Select } from 'src/ui/select';
 import {
 	ArticleStateType,
@@ -15,6 +15,7 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 
 type ArticleParamsFormProps = {
 	articleState: ArticleStateType;
@@ -27,19 +28,13 @@ export const ArticleParamsForm = ({
 }: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [formState, setFormState] = useState<ArticleStateType>(articleState);
-	const sidebarRef = useRef<HTMLElement>(null);
-	useEffect(() => {
-		const handleClick = (event: MouseEvent) => {
-			if (!sidebarRef.current?.contains(event.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handleClick);
+	const sidebarRef = useRef<HTMLDivElement>(null);
 
-		return () => {
-			document.removeEventListener('mousedown', handleClick);
-		};
-	}, []);
+	useOutsideClickClose({
+		isOpen,
+		rootRef: sidebarRef,
+		onChange: setIsOpen,
+	});
 
 	return (
 		<>
